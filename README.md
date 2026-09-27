@@ -37,7 +37,7 @@ The scripts also run through the game's native console, no extensions required:
 
 ```
 sv_cheats 1
-mp_gamemode coop
+map <map> coop
 script_execute nav_fixes/<map>_navfixes
 ```
 
@@ -46,7 +46,7 @@ Since no fix is ever saved to the `.nav` file (we never call `nav_save`), reload
 ## Adding a new fix
 
 1. Identify the spot where bots get stuck.
-2. In local testing, with `sv_cheats 1` and `mp_gamemode coop`, enter nav mesh edit mode:
+2. In local testing, with `sv_cheats 1` and `map <map> coop`, enter nav mesh edit mode:
    ```
    nav_edit 1
    ```
