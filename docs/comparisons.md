@@ -22,4 +22,10 @@ Bots got stuck on the lower side of a one-way drop in the mall corridor, unable 
 
 Script: [`scripts/vscripts/nav_fixes/c1m3_mall_navfixes.nut`](../scripts/vscripts/nav_fixes/c1m3_mall_navfixes.nut)
 
-_Video pending._
+## Before / After
+https://github.com/user-attachments/assets/bc143375-31d6-44e9-8fe6-93ca857bb427
+
+https://github.com/user-attachments/assets/79246c71-468b-4f74-8fab-0cf351fafd54
+
+
+
