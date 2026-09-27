@@ -71,7 +71,3 @@ See [docs/comparisons.md](docs/comparisons.md) for the full before/after video c
 ## Known limitations
 
 - The fix resolves **pathfinding** (the bot now considers the route and tries to use it), not necessarily physical **traversal** of large height gaps. Whether a bot can actually walk/step across depends on the specific geometry at that spot.
-
-## License
-
-_TBD._
