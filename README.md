@@ -1,76 +1,77 @@
 # L4D2 Nav Mesh Fixes
 
-Coleção de correções de nav mesh para o Left 4 Dead 2, focadas em pontos específicos de mapas onde os **bots (sobreviventes e infectados) ficam presos sem rota de volta** — geralmente locais que só são reversíveis por jogadores humanos usando técnicas como empurrar um objeto de cenário (ex: uma cadeira) e escalar nele.
+A collection of nav mesh fixes for Left 4 Dead 2, targeting specific map spots where **bots (survivors and infected) get stuck with no route back** — usually locations that are only reversible by human players using techniques like pushing a scenery prop (e.g. a chair) and climbing it.
 
-Cada fix é um script [VScript](https://developer.valvesoftware.com/wiki/VScript) que cria conexões novas entre áreas do nav mesh em tempo de execução, usando `NavMesh.GetNavAreaByID()` e `area.ConnectTo()`. Nenhuma correção altera o arquivo `.nav` do mapa — tudo é aplicado dinamicamente a cada carregamento de mapa, então nada aqui conflita com o nav mesh original ou com outras modificações.
+Each fix is a [VScript](https://developer.valvesoftware.com/wiki/VScript) file that creates new connections between nav mesh areas at runtime, using `NavMesh.GetNavAreaByID()` and `area.ConnectTo()`. No fix modifies the map's `.nav` file — everything is applied dynamically on every map load, so nothing here conflicts with the original nav mesh or with other modifications.
 
-## Por que isso existe
+## Why this exists
 
-A IA de navegação do L4D2 é inteiramente baseada no nav mesh: se duas áreas não têm uma conexão registrada, não existe cálculo de rota possível entre elas, não importa a distância. Em vários mapas (oficiais e customizados) existem pontos de "sem volta" intencionais para jogadores humanos, que dependem do motor de física (empurrar/escalar objetos) para contornar — algo que a IA de bot não sabe fazer. O resultado: bots ficam presos indefinidamente nesses pontos.
+L4D2's bot navigation is entirely based on the nav mesh: if two areas have no registered connection, there is no possible route between them, no matter the distance. Several maps (official and custom) have intentional "no return" spots for human players, which rely on the physics engine (pushing/climbing props) to bypass — something bot AI has no concept of. The result: bots get stuck at these spots indefinitely.
 
-Esse repositório documenta e corrige esses pontos, mapa por mapa, adicionando manualmente as conexões de nav mesh que faltam.
+This repository documents and fixes these spots, map by map, by manually adding the missing nav mesh connections.
 
-## Estrutura do repositório
+## Repository structure
 
 ```
 l4d2-nav-fixes/
 ├── scripts/
 │   └── vscripts/
 │       └── nav_fixes/
-│           └── <mapa>_navfixes.nut     # um script por mapa corrigido
+│           └── <map>_navfixes.nut      # one script per fixed map
 └── cfg/
     └── stripper/
         └── maps/
-            └── <mapa>.cfg               # injeta o logic_auto que roda o script acima
+            └── <map>.cfg                # injects the logic_auto that runs the script above
 ```
 
-## Instalação (servidor com SourceMod/Metamod + Stripper:Source)
+## Installation (server with SourceMod/Metamod + Stripper:Source)
 
-1. Copie o conteúdo de `scripts/vscripts/` para `left4dead2/scripts/vscripts/` do seu servidor.
-2. Copie o conteúdo de `cfg/stripper/maps/` para a pasta `maps/` da sua configuração do Stripper:Source (por padrão `addons/stripper/maps/`; se você usa Stripper com múltiplas configs nomeadas, ajuste para `addons/stripper/<sua_config>/maps/`).
-3. Reinicie o mapa ou o servidor. O `logic_auto` injetado dispara `RunScriptFile` na entidade `director` ~20 segundos após o spawn do mapa, aplicando as conexões.
-4. Confira no console/log do servidor se aparece `[NavFixes] <mapa>_navfixes initialized` seguido de `Fix N applied`.
+1. Copy the contents of `scripts/vscripts/` into your server's `left4dead2/scripts/vscripts/`.
+2. Copy the contents of `cfg/stripper/maps/` into your Stripper:Source config's `maps/` folder (by default `addons/stripper/maps/`; if you run Stripper with multiple named configs, adjust to `addons/stripper/<your_config>/maps/`).
+3. Restart the map or the server. The injected `logic_auto` fires `RunScriptFile` on the `director` entity ~20 seconds after map spawn, applying the connections.
+4. Check the server console/log for `[NavFixes] <map>_navfixes initialized` followed by `Fix N applied`.
 
-## Testando localmente (sem SourceMod/Stripper)
+## Testing locally (no SourceMod/Stripper)
 
-Os scripts também rodam via console nativo do jogo, sem precisar de nenhuma extensão:
+The scripts also run through the game's native console, no extensions required:
 
 ```
 sv_cheats 1
 mp_gamemode coop
-script_execute nav_fixes/<mapa>_navfixes
+script_execute nav_fixes/<map>_navfixes
 ```
 
-Como nenhuma correção é salva no `.nav` (não usamos `nav_save`), recarregar o mapa sem rodar o `script_execute` sempre volta ao estado original — útil para comparar o comportamento antes/depois.
+Since no fix is ever saved to the `.nav` file (we never call `nav_save`), reloading the map without running `script_execute` always reverts to the original state — useful for comparing before/after behavior.
 
-## Como adicionar uma correção nova
+## Adding a new fix
 
-1. Identifique o ponto onde bots ficam presos.
-2. Em teste local, com `sv_cheats 1` e `mp_gamemode coop`, entre em modo de edição do nav mesh:
+1. Identify the spot where bots get stuck.
+2. In local testing, with `sv_cheats 1` and `mp_gamemode coop`, enter nav mesh edit mode:
    ```
    nav_edit 1
    ```
-3. Aponte a mira na área "de origem" (o lado de onde os bots vêm, já alcançável) e na(s) área(s) "de destino" (onde os bots ficam presos). Para cada uma:
+3. Aim at the "origin" area (the side bots come from, already reachable) and at the "stuck" area(s) (where bots get stuck). For each one:
    ```
-   nav_toggle_in_selected_set     " (tecla Z por padrão) — seleciona a área sob a mira
-   nav_show_area_info 5           — mostra o ID e atributos da área por 5 segundos
+   nav_toggle_in_selected_set     (default bind: Z) — selects the area under the crosshair
+   nav_show_area_info 5           — shows the area's ID and attributes for 5 seconds
    ```
-4. Anote os IDs e a posição (`pos`) de cada área — a diferença de posição entre origem e destino define a direção da conexão (`0`=NORTH, `1`=EAST, `2`=SOUTH, `3`=WEST).
-5. Crie `scripts/vscripts/nav_fixes/<mapa>_navfixes.nut` conectando as áreas de destino de volta à área de origem com `.ConnectTo(origem, direção)`.
-6. Teste com `script_execute nav_fixes/<mapa>_navfixes` e confirme que um bot consegue voltar.
-7. Crie `cfg/stripper/maps/<mapa>.cfg` para automatizar o carregamento em produção.
+4. Note down the ID and position (`pos`) of each area — the position difference between origin and stuck side determines the connection direction (`0`=NORTH, `1`=EAST, `2`=SOUTH, `3`=WEST).
+5. Create `scripts/vscripts/nav_fixes/<map>_navfixes.nut`, connecting the stuck-side area(s) back to the origin area with `.ConnectTo(origin, direction)`.
+6. Test with `script_execute nav_fixes/<map>_navfixes` and confirm a bot can find its way back.
+7. Create `cfg/stripper/maps/<map>.cfg` to automate loading it in production.
 
-## Mapas corrigidos
+## Fixed maps
 
-| Mapa | Descrição do ponto | Vídeo antes/depois |
+| Map | Spot description | Before/after video |
 |---|---|---|
-| `c1m3_mall` | Corredor do shopping — bots ficavam presos após passar por um ponto sem volta, sem conseguir voltar pro grupo | _pendente_ |
+| `c1m3_mall` | Mall corridor — bots got stuck after passing through a one-way spot, unable to find a route back to the group | [docs/comparisons.md](docs/comparisons.md#c1m3_mall) |
 
-## Limitações conhecidas
+See [docs/comparisons.md](docs/comparisons.md) for the full before/after video comparisons.
 
-- As correções resolvem a **navegação** (o bot passa a considerar a rota e tentar usá-la), mas não necessariamente a **travessia física** de desníveis grandes — dependendo da altura, o bot pode usar o mecanismo padrão do jogo de "teleportar de volta pro grupo" em vez de subir andando. Colocar um objeto físico (ex: uma cadeira) no caminho, como um jogador faria, costuma resolver isso combinado com a correção de nav mesh.
-- Fazer o bot agachar/pular automaticamente em pontos específicos exigiria também os atributos `NAV_BASE_CROUCH`/`NAV_BASE_JUMP` (via `left4dhooks`) e um plugin que os torne efetivos (a IA vanilla do L4D2 ignora esses atributos por padrão) — fora do escopo atual deste repositório, que se limita a conexões de nav mesh via VScript.
+## Known limitations
 
-## Licença
+- The fix resolves **pathfinding** (the bot now considers the route and tries to use it), not necessarily physical **traversal** of large height gaps. Whether a bot can actually walk/step across depends on the specific geometry at that spot.
 
-_A definir._
+## License
+
+_TBD._
