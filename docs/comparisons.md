@@ -14,6 +14,16 @@ Drag and drop the video file into a GitHub issue or pull request comment box (a 
 
 ---
 
+## c1m1_hotel
+
+### Changes 1 and 2 — Burning corridor (fire16 and fire14) _(optional nav change)_
+
+Bots avoided a burning corridor and took a much longer, more dangerous route around it. For each of the corridor's two fires, the map intentionally blocks the nav areas with a `func_nav_blocker` and the fire's `trigger_hurt` marks them as damaging. The change removes both and recreates the fire's damage from the script, so bots run through the fire while still taking damage.
+
+Script: [`scripts/vscripts/nav_changes/c1m1_hotel_navchanges.nut`](../scripts/vscripts/nav_changes/c1m1_hotel_navchanges.nut)
+
+_Video pending._
+
 ## c1m3_mall
 
 ### Fix 1 — Mall corridor point of no return
