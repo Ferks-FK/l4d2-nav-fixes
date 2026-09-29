@@ -49,7 +49,8 @@ foreach (fire in ::NavChanges_C1M1_Fires)
 
 				// burn damage makes survivor bots try to run from the fire
 				local isSurvivor = classname == "player" && ent.IsSurvivor()
-				ent.TakeDamage(fire.damage * NAVCHANGES_HURT_INTERVAL, isSurvivor ? NAVCHANGES_DMG_GENERIC : NAVCHANGES_DMG_BURN, null)
+				// world as the attacker, so plugins treat it like the original fire's damage
+				ent.TakeDamage(fire.damage * NAVCHANGES_HURT_INTERVAL, isSurvivor ? NAVCHANGES_DMG_GENERIC : NAVCHANGES_DMG_BURN, Entities.First())
 			}
 		}
 	}
