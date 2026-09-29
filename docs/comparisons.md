@@ -22,7 +22,11 @@ Bots avoided a burning corridor and took a much longer, more dangerous route aro
 
 Script: [`scripts/vscripts/nav_changes/c1m1_hotel_navchanges.nut`](../scripts/vscripts/nav_changes/c1m1_hotel_navchanges.nut)
 
-_Video pending._
+## Before / After
+https://github.com/user-attachments/assets/4710dd5b-f3b0-4b53-a278-2621c258d40f
+
+https://github.com/user-attachments/assets/6daf3037-428c-48c3-b6df-41af3660081e
+
 
 ## c1m3_mall
 
