@@ -2,18 +2,6 @@
 
 Video comparisons for each nav mesh fix in this repository, showing bot behavior before and after applying the fix.
 
-## How to add a video
-
-**Option A — native GitHub upload (recommended, plays inline on the page):**
-Drag and drop the video file into a GitHub issue or pull request comment box (a throwaway one is fine), then copy the generated `https://github.com/Ferks-FK/l4d2-nav-fixes/assets/...` URL and paste it on its own line under the relevant fix below (or wrap it as `<video src="URL" controls></video>`).
-
-**Option B — YouTube thumbnail link:**
-```
-[![Before/After](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://youtu.be/VIDEO_ID)
-```
-
----
-
 ## c1m1_hotel
 
 ### Changes 1 and 2 — Burning corridor (fire16 and fire14) _(optional nav change)_
